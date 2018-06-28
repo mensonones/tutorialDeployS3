@@ -80,7 +80,7 @@ workflows:
           filters:
             branches:
               only: master
-
+---
    
 ## Passo 5
 Feito tudo isso, o CircleCI irá rodar após qualquer commit que fizer para o repositório e então irá fazer o deploy se tudo ocorrer bem. 
