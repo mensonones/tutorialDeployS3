@@ -13,74 +13,7 @@ Dentro do seu projeto você deve criar uma pasta chamada: .circleci, e dentro de
 
 ## Passo 4
 Conteúdo do arquivo .config.yml
-
----
-# Javascript Node CircleCI 2.0 configuration file
-version: 2
-jobs:
-  build:
-    docker:
-      - image: circleci/node:9.11
-    working_directory: /tmp/nome-pasta-que-quiser
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          - v1-dependencies-
-      - run: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run: npm run production
-      - save_cache:
-          paths:
-            - dist
-            - public
-          key: build-{{ .Revision }}
-  deploy:
-    docker:
-      - image: circleci/node:9.11
-    working_directory: /tmp/nome-pasta-que-quiser
-    steps:
-      - restore_cache:
-          keys:
-          - build-{{ .Revision }}
-      - run: |
-             sudo apt-get -y -qq install awscli
-             aws s3 sync public 's3://nome-bucket-s3/' --delete --exclude "branch/*" --acl public-read
-             aws s3 sync dist 's3://nome-bucket-s3/dist' --acl public-read
-  branch-deploy:
-    docker:
-      - image: circleci/node:9.11
-    working_directory: /tmp/nome-pasta-que-quiser
-    steps:
-      - restore_cache:
-          keys:
-          - build-{{ .Revision }}
-      - run: |
-             sudo apt-get -y -qq install awscli
-             aws s3 sync public "s3://nome-bucket-s3/branch/$CIRCLE_BRANCH/" --acl public-read
-             aws s3 sync dist "s3://nome-bucket-s3/branch/$CIRCLE_BRANCH/dist" --acl public-read
-workflows:
-  version: 2
-  build-deploy:
-    jobs:
-      - build
-      - branch-deploy:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: master
-      - deploy:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
----
+<https://gist.github.com/mensonones/597cff581e583970249c30632bda9f20>
    
 ## Passo 5
 Feito tudo isso, o CircleCI irá rodar após qualquer commit que fizer para o repositório e então irá fazer o deploy se tudo ocorrer bem. 
